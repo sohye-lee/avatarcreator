@@ -8,12 +8,12 @@
     "css": "src/styles/globals.css",
     "baseColor": "slate",
     "cssVariables": false,
-    "prefix": "tw-"
+    "prefix": ""
   },
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
     "lib": "@/lib",
-    "ui": "@/ui"
+    "ui": "@/components/ui"
   }
 }
