@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Gayathri:wght@100;400;700&family=Libre+Bodoni&display=swap");
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -75,4 +73,14 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+p,
+button,
+a,
+li,
+input,
+select,
+textarea {
+  font-family: "Inter", sans-serif;
 }

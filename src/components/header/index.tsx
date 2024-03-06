@@ -1,6 +1,7 @@
 import React from "react";
 import { Nav } from "./nav";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Header = () => {
   return (

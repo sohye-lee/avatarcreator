@@ -1,9 +1,24 @@
 import Header from "@/components/header";
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import BG from "@public/images/background.jpg";
 import Image from "next/image";
+import {
+  Dialog,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { FaGoogle } from "react-icons/fa";
+import { signIn } from "next-auth/react";
 
 const HomePage = () => {
+  const [email, setEmail] = useState<string>();
+  const [authLoading, setAuthLoading] = useState<boolean>(false);
   return (
     <div className=" min-h-screen w-full ">
       <Header />
@@ -18,14 +33,66 @@ const HomePage = () => {
           <h1 className="relative z-20  text-center text-5xl font-medium">
             Transform Your Selfies
             <br />
-            into Unique AI Avatars
+            into Unique{" "}
+            <span className="inline font-bold text-[#ff436f]">AI </span> Avatars
           </h1>
           <p className="text-md text-center text-slate-500">
             From Snapshots to Avatars, Effortlessly.
           </p>
-          <button className="rounded-full bg-black from-fuchsia-500 to-cyan-500 px-8 py-2 text-white hover:bg-gradient-to-r">
-            Create Your Avatar with AI
-          </button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="rounded-full bg-black from-fuchsia-500 to-cyan-500 px-8 py-2 text-white hover:bg-gradient-to-r">
+                Create Your Avatar with AI
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  <p>Complete your authentication</p>
+                </DialogTitle>
+                <DialogDescription>
+                  2 ways of authentication are here:
+                </DialogDescription>
+              </DialogHeader>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    setAuthLoading(true);
+                    await signIn("email", {
+                      email,
+                    });
+                  } catch (error) {
+                    console.error(error);
+                  } finally {
+                    setAuthLoading(false);
+                  }
+                }}
+                className="flex flex-col items-stretch gap-2"
+              >
+                <Input
+                  type="email"
+                  required
+                  placeholder="you@mail.com"
+                  onChange={(e: FormEvent<HTMLInputElement>) =>
+                    setEmail(e.currentTarget.value)
+                  }
+                  value={email}
+                />
+                <Button>Verify Your Email</Button>
+              </form>
+              <div className="relative flex justify-center">
+                <p className=" relative z-20 bg-white px-2 text-sm text-gray-500">
+                  OR
+                </p>
+                <div className="absolute left-0 top-[50%] h-[1px] w-full -translate-y-[50%] bg-gray-500"></div>
+              </div>
+              <Button onClick={() => signIn("google")}>
+                <FaGoogle className="mr-2" />
+                Sign In with Google
+              </Button>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>

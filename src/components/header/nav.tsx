@@ -13,8 +13,10 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { useSession } from "next-auth/react";
 
 export function Nav() {
+  const { data: session, status } = useSession();
   return (
     <Menubar>
       <MenubarMenu>
@@ -91,15 +93,27 @@ export function Nav() {
       <MenubarMenu>
         <MenubarTrigger>Account</MenubarTrigger>
         <MenubarContent>
-          <MenubarRadioGroup value="benoit">
-            <MenubarRadioItem value="andy">Login</MenubarRadioItem>
-            <MenubarRadioItem value="benoit">Register</MenubarRadioItem>
-            <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
-          </MenubarRadioGroup>
-          <MenubarSeparator />
-          <MenubarItem inset>Manage Profile</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Logout</MenubarItem>
+          {status == "authenticated" ? (
+            <>
+              {session?.user?.name}
+              <MenubarItem>
+                <p>Manage Profile</p>
+              </MenubarItem>
+              <MenubarSeparator />
+              <MenubarItem>
+                <p>Logout</p>
+              </MenubarItem>
+            </>
+          ) : (
+            <>
+              <MenubarItem>
+                <p>Login</p>
+              </MenubarItem>
+              <MenubarItem>
+                <p>Sign Up</p>
+              </MenubarItem>
+            </>
+          )}
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
