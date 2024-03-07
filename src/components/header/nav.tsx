@@ -13,7 +13,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export function Nav() {
   const { data: session, status } = useSession();
@@ -100,7 +100,7 @@ export function Nav() {
                 <p>Manage Profile</p>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem>
+              <MenubarItem onClick={() => signOut()}>
                 <p>Logout</p>
               </MenubarItem>
             </>

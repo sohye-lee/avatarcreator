@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FaGoogle } from "react-icons/fa";
 import { signIn } from "next-auth/react";
+import { RiGoogleLine } from "react-icons/ri";
+import { RiDiscordLine } from "react-icons/ri";
 
 const HomePage = () => {
   const [email, setEmail] = useState<string>();
@@ -88,8 +90,12 @@ const HomePage = () => {
                 <div className="absolute left-0 top-[50%] h-[1px] w-full -translate-y-[50%] bg-gray-500"></div>
               </div>
               <Button onClick={() => signIn("google")}>
-                <FaGoogle className="mr-2" />
+                <RiGoogleLine className="mr-2" />
                 Sign In with Google
+              </Button>
+              <Button onClick={() => signIn("discord")}>
+                <RiDiscordLine className="mr-2" />
+                Sign In with Discord
               </Button>
             </DialogContent>
           </Dialog>

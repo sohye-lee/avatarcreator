@@ -41,6 +41,9 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
+  pages: {
+    verifyRequest: "/auth/verify-request",
+  },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
     DiscordProvider({

@@ -18,6 +18,7 @@ model Post {
     createdById String
 
     @@index([name])
+    @@index([createdById])
 }
 
 // Necessary for Next auth
@@ -37,6 +38,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
@@ -45,6 +47,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
 }
 
 model User {
@@ -56,6 +60,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    isPaymentSucceeded Boolean @default(false)
 }
 
 model VerificationToken {
