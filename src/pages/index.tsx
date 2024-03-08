@@ -1,6 +1,6 @@
 "use client";
 import Header from "@/components/header";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import BG from "@public/images/background.jpg";
 import Image from "next/image";
 import {
@@ -33,9 +33,28 @@ const HomePage = () => {
       toast.error(error.message);
     },
     onSuccess: (data) => {
-      router.push(data.checkoutUrl?.toString() || "/");
+      router.push(data.checkoutUrl?.toString() ?? "/");
     },
   });
+
+  const paymentStatus = api.stripe.getPaymentStatus.useQuery();
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("success")) {
+      toast.success(
+        "Payment succeeded! You will receive an email confirmation.",
+      );
+      // router.push("/dashboard");
+    }
+
+    if (query.get("canceled")) {
+      toast.error(
+        "Order canceled -- continue to shop around and checkout when you’re ready.",
+      );
+    }
+    query.get("success") && console.log("paymentStatus", paymentStatus.data);
+  }, [paymentStatus]);
 
   return (
     <div className=" min-h-screen w-full ">
@@ -96,7 +115,7 @@ const HomePage = () => {
                     onChange={(e: FormEvent<HTMLInputElement>) =>
                       setEmail(e.currentTarget.value)
                     }
-                    value={email || ""}
+                    value={email ?? ""}
                   />
                   <Button>Verify Your Email</Button>
                 </form>
@@ -119,9 +138,15 @@ const HomePage = () => {
           ) : (
             <button
               className={`${CTAClassName} group w-full`}
-              onClick={() => checkout.mutate()}
+              onClick={() => {
+                paymentStatus.data?.isPaymentSucceeded
+                  ? router.push("/dashboard")
+                  : checkout.mutate();
+              }}
             >
-              Checkout
+              {paymentStatus.data?.isPaymentSucceeded
+                ? "Go to your dashboard"
+                : "Checkout"}
               <RxRocket className="group-hover:animate-ping" />
             </button>
           )}

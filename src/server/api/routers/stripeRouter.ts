@@ -6,10 +6,10 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { env } from "@/env";
-import initializeStripe from "stripe";
+import Stripe from "stripe";
 import { TRPCError } from "@trpc/server";
 
-const stripe = new initializeStripe(env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
 
@@ -29,7 +29,11 @@ export const stripeRouter = createTRPCRouter({
       line_items: [
         {
           // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-          price: productData.default_price.toString(),
+          price:
+            typeof productData.default_price != "object"
+              ? productData.default_price.toString()
+              : JSON.stringify(productData.default_price),
+          // price: productData.default_price.toString(),
           quantity: 1,
         },
       ],
@@ -43,4 +47,19 @@ export const stripeRouter = createTRPCRouter({
     // checkout session
     return { checkoutUrl: paymentSession.url };
   }),
+
+  getPaymentStatus: protectedProcedure.query(
+    async ({ ctx: { db, session } }) => {
+      console.log("session:", session);
+
+      return await db.user.findUnique({
+        where: {
+          id: session.user.id,
+        },
+        select: {
+          isPaymentSucceeded: true,
+        },
+      });
+    },
+  ),
 });
