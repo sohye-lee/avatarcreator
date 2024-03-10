@@ -26,7 +26,7 @@ async function buffer(readable: Readable) {
 }
 
 const stripeWebhook = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
   //   console.log("server session:", session);
   if (req.method === "POST") {
     let event;
@@ -54,28 +54,26 @@ const stripeWebhook = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // console.log(data);
     if (
-      event.type == "charge.succeeded" &&
+      event.type == "charge.succeeded"
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      data
     ) {
-      console.log("EVENT TYPE", event.type);
-      console.log("SESSION USER", session?.user?.email);
+      // console.log("SESSION USER", session?.user?.email);
 
-      //   await db.user.upsert({
-      //     where: {
-      //       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      //       email: data.receipt_email,
-      //       //   email: data.billing_details.email,
-      //     },
-      //     create: {
-      //       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      //       email: data.receipt_email,
-      //       isPaymentSucceeded: true,
-      //     },
-      //     update: {
-      //       isPaymentSucceeded: true,
-      //     },
-      //   });
+      await db.user.upsert({
+        where: {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          email: data.receipt_email,
+          //   email: data.billing_details.email,
+        },
+        create: {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          email: data.receipt_email,
+          isPaymentSucceeded: true,
+        },
+        update: {
+          isPaymentSucceeded: true,
+        },
+      });
     }
 
     return res.status(200).send("Succeeded");
