@@ -33,7 +33,7 @@ export const stripeRouter = createTRPCRouter({
             typeof productData.default_price != "object"
               ? productData.default_price.toString()
               : JSON.stringify(productData.default_price),
-          // price: productData.default_price.toString(),
+          // productData.default_price.toString(),
           quantity: 1,
         },
       ],
@@ -42,7 +42,6 @@ export const stripeRouter = createTRPCRouter({
       cancel_url: `${env.HOST}/?canceled=true`,
       automatic_tax: { enabled: true },
     });
-    // fetch the product with product Id
 
     // checkout session
     return { checkoutUrl: paymentSession.url };
@@ -52,7 +51,7 @@ export const stripeRouter = createTRPCRouter({
     async ({ ctx: { db, session } }) => {
       console.log("session:", session);
 
-      return await db.user.findUnique({
+      return await db.user.findFirst({
         where: {
           id: session.user.id,
         },

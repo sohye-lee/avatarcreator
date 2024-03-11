@@ -40,6 +40,8 @@ const HomePage = () => {
   const paymentStatus = api.stripe.getPaymentStatus.useQuery();
 
   useEffect(() => {
+    console.log(session?.user?.id);
+
     const query = new URLSearchParams(window.location.search);
     if (query.get("success")) {
       toast.success(
@@ -53,8 +55,8 @@ const HomePage = () => {
         "Order canceled -- continue to shop around and checkout when you’re ready.",
       );
     }
-    query.get("success") && console.log("paymentStatus", paymentStatus.data);
-  }, [paymentStatus]);
+    // query.get("success") && console.log("paymentStatus", paymentStatus.data);
+  }, []);
 
   return (
     <div className=" min-h-screen w-full ">
@@ -139,14 +141,16 @@ const HomePage = () => {
             <button
               className={`${CTAClassName} group w-full`}
               onClick={() => {
-                paymentStatus.data?.isPaymentSucceeded
-                  ? router.push("/dashboard")
-                  : checkout.mutate();
+                // paymentStatus.data?.isPaymentSucceeded
+                //   ? router.push("/dashboard")
+                //   : checkout.mutate();
+                checkout.mutate();
               }}
             >
-              {paymentStatus.data?.isPaymentSucceeded
+              {/* {paymentStatus.data?.isPaymentSucceeded
                 ? "Go to your dashboard"
-                : "Checkout"}
+                : "Checkout"} */}
+              "checkout"
               <RxRocket className="group-hover:animate-ping" />
             </button>
           )}

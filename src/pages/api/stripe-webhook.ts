@@ -1,12 +1,9 @@
-"use server";
 import { env } from "@/env";
 import { db } from "@/server/db";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import type { Readable } from "stream";
 import Stripe from "stripe";
-import { authOptions } from "@/server/auth";
+
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
