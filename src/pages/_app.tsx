@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { api } from "@/utils/api";
 
 import "@/styles/globals.css";
+import Header from "@/components/header";
 
 // const inter = Gayathri({
 //   subsets: ["latin"],
@@ -31,6 +32,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <main className={`font-sans ${inter.className} ${gayathri.variable}`}>
+        <Header />
+
         <Toaster />
         <Component {...pageProps} />
       </main>

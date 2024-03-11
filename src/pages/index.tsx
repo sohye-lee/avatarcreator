@@ -37,16 +37,18 @@ const HomePage = () => {
     },
   });
 
+  const updateUser = api.user.updatePaymentStatus.useQuery();
   const paymentStatus = api.stripe.getPaymentStatus.useQuery();
 
   useEffect(() => {
     console.log(session?.user?.id);
 
     const query = new URLSearchParams(window.location.search);
-    if (query.get("success")) {
+    if (query.get("success") && session?.user) {
       toast.success(
         "Payment succeeded! You will receive an email confirmation.",
       );
+      updateUser;
       // router.push("/dashboard");
     }
 
@@ -56,11 +58,11 @@ const HomePage = () => {
       );
     }
     // query.get("success") && console.log("paymentStatus", paymentStatus.data);
-  }, []);
+  }, [paymentStatus]);
 
   return (
     <div className=" min-h-screen w-full ">
-      <Header />
+      {/* <Header /> */}
       <div className="relative flex w-full flex-col items-center px-4 ">
         <Image
           fill
@@ -141,16 +143,15 @@ const HomePage = () => {
             <button
               className={`${CTAClassName} group w-full`}
               onClick={() => {
-                // paymentStatus.data?.isPaymentSucceeded
-                //   ? router.push("/dashboard")
-                //   : checkout.mutate();
-                checkout.mutate();
+                paymentStatus.data?.isPaymentSucceeded
+                  ? router.push("/dashboard")
+                  : checkout.mutate();
+                // checkout.mutate();
               }}
             >
-              {/* {paymentStatus.data?.isPaymentSucceeded
+              {paymentStatus.data?.isPaymentSucceeded
                 ? "Go to your dashboard"
-                : "Checkout"} */}
-              "checkout"
+                : "Checkout"}
               <RxRocket className="group-hover:animate-ping" />
             </button>
           )}
