@@ -1,4 +1,5 @@
 "use client";
+import Dropzone from "@/components/image/dropzone";
 import DashboardLayout from "@/components/layout";
 import Loading from "@/components/loading";
 import { api } from "@/utils/api";
@@ -26,10 +27,13 @@ const Dashboard = () => {
     return <Loading />;
   }
   return (
-    <div>
-      {/* Protected Access: only for users who completed payments  */}
-      dashboard
-    </div>
+    <DashboardLayout>
+      <div className="mx-auto flex max-w-[1024px] flex-col   space-y-3">
+        {/* Protected Access: only for users who completed payments  */}
+        <h1 className="text-3xl font-medium">Upload images</h1>
+        <Dropzone />
+      </div>
+    </DashboardLayout>
   );
 };
 
