@@ -6,52 +6,35 @@ import { X } from "lucide-react";
 import { api } from "@/utils/api";
 import { CTAClassName } from "@/utils/constants";
 import { RiUploadCloud2Line } from "react-icons/ri";
-
-// const thumbsContainer = {
-//   display: "flex",
-//   flexDirection: "row",
-//   flexWrap: "wrap",
-//   marginTop: 16,
-// };
-
-// const thumb = {
-//   display: "inline-flex",
-//   borderRadius: 2,
-//   border: "1px solid #eaeaea",
-//   marginBottom: 8,
-//   marginRight: 8,
-//   width: 100,
-//   height: 100,
-//   padding: 4,
-//   boxSizing: "border-box",
-// };
-
-// const thumbInner = {
-//   display: "flex",
-//   minWidth: 0,
-//   overflow: "hidden",
-// };
-
-// const img = {
-//   display: "block",
-//   width: "auto",
-//   height: "100%",
-// };
+import axios from "axios";
+import toast from "react-hot-toast";
+import LoadingSmall from "../loadingSmall";
 
 type FileWithPreview = File & { preview: string; id: string };
 
 export default function Dropzone() {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
+  const [uploading, setUploading] = useState(false);
   const getUploadUrls = api.storage.getUploadUrls.useMutation({
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: async (data) => {
+      try {
+        setUploading(true);
+        const uploadPromises = data.map((uploadUrl, i) => {
+          return axios.put(uploadUrl, files[i]);
+        });
+        await Promise.all(uploadPromises);
+      } catch (error) {
+        toast.error("Couldn't upload images.");
+        console.log(error);
+      } finally {
+        setUploading(false);
+      }
     },
     onError: (err) => {
       console.log(err.message);
     },
   });
-
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/png": [".png"],
@@ -95,7 +78,7 @@ export default function Dropzone() {
           or click to select files
         </p>
       </div>
-      <div className="flex  flex-wrap items-center gap-[1px] ">
+      <div className="flex flex-wrap items-center gap-[1px] ">
         {files &&
           files.length > 0 &&
           files.map((file) => (
@@ -123,13 +106,20 @@ export default function Dropzone() {
         <div className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-center bg-[rgba(0,0,0,.1)] py-5">
           <button
             className={`${CTAClassName}  `}
+            disabled={uploading}
             onClick={() =>
               getUploadUrls.mutate({
                 images: files.map((file) => ({ imageId: file.id })),
               })
             }
           >
-            <RiUploadCloud2Line /> Upload All
+            {uploading ? (
+              <LoadingSmall />
+            ) : (
+              <>
+                <RiUploadCloud2Line /> Upload All
+              </>
+            )}
           </button>
         </div>
       )}
