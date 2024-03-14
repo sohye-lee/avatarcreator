@@ -17,6 +17,9 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: ["blinkavatarapp.s3.us-east-1.amazonaws.com", "github.com"],
+  },
 };
 
 export default config;
