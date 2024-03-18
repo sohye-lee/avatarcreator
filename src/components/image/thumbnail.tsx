@@ -11,19 +11,11 @@ interface ThumbnailProps {
   onClick?: (id: string) => void;
   src: string;
   alt?: string;
-  // isLoading?: boolean;
   s3Key?: string;
   [key: string]: any;
 }
 
-const Thumbnail = ({
-  id,
-  onClick,
-  src,
-  alt,
-  // isLoading = false,
-  s3Key,
-}: ThumbnailProps) => {
+const Thumbnail = ({ id, onClick, src, alt, s3Key }: ThumbnailProps) => {
   const utils = api.useContext();
   const deleteImage = api.storage.removeImageFromS3.useMutation({
     onSuccess: () => {
@@ -55,6 +47,7 @@ const Thumbnail = ({
         alt={alt || "image"}
         fill
         className="h-auto w-auto object-cover"
+        sizes=" "
         // className="h-auto min-h-full w-auto min-w-full object-fill"
       />
     </div>

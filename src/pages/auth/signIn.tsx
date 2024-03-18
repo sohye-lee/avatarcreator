@@ -1,14 +1,20 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
-import React, { FormEvent, useState } from "react";
+import { useRouter } from "next/router";
+import React, { FormEvent, useEffect, useState } from "react";
 import { RiArrowLeftLine, RiDiscordLine, RiGoogleLine } from "react-icons/ri";
 
 const SignIn = () => {
+  const router = useRouter();
   const [email, setEmail] = useState<string>();
   const [authLoading, setAuthLoading] = useState<boolean>(false);
   const { status, data: session } = useSession();
+  useEffect(() => {
+    session && session?.user && router.push("/");
+  }, [session, session?.user]);
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-slate-100">
       <div className="flex min-w-[340px] flex-col gap-3 rounded border border-slate-200 bg-white px-8 py-5">

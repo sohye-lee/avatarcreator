@@ -47,6 +47,7 @@ export const storageRouter = createTRPCRouter({
           });
         }),
       );
+      console.log("signed urls:", getSignedUrls);
 
       return getSignedUrls;
     }),

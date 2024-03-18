@@ -23,10 +23,13 @@ export function Nav() {
     <Menubar>
       <MenubarMenu>
         <MenubarTrigger>Account</MenubarTrigger>
-        <MenubarContent className="r-3 -translate-x-4">
+        <MenubarContent className="r-3 -translate-x-4 py-4">
           {status == "authenticated" ? (
             <>
-              {session?.user?.name}
+              <MenubarItem>
+                <p className="text-purple-500">Hi, {session?.user?.name}</p>
+              </MenubarItem>
+
               <MenubarItem>
                 <p>Manage Profile</p>
               </MenubarItem>

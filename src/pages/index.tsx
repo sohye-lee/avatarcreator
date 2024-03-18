@@ -41,8 +41,6 @@ const HomePage = () => {
   const paymentStatus = api.stripe.getPaymentStatus.useQuery();
 
   useEffect(() => {
-    console.log(session?.user?.id);
-
     const query = new URLSearchParams(window.location.search);
     if (query.get("success") && session?.user) {
       toast.success(
