@@ -4,14 +4,14 @@ import Thumbnail from "@/components/image/thumbnail";
 import DashboardLayout from "@/components/layout";
 import Loading from "@/components/loading";
 import { api } from "@/utils/api";
-import { X } from "lucide-react";
-import Image from "next/image";
+import { CTAClassName } from "@/utils/constants";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const router = useRouter();
+  const [wantToUploadMore, setWantToUploadMore] = useState(false);
   const paymentStatus = api.stripe.getPaymentStatus.useQuery(undefined, {
     onError: (err) => {
       if (err.data?.httpStatus == 401) {
@@ -30,9 +30,7 @@ const Dashboard = () => {
 
   const deleteImage = api.storage.removeImageFromS3.useMutation();
 
-  useEffect(() => {
-    console.log("images data:", allUploadedImages.data?.uploadedImages);
-  }, [allUploadedImages, router]);
+  useEffect(() => {}, [allUploadedImages, router, deleteImage]);
 
   if (paymentStatus.isLoading || !paymentStatus.data?.isPaymentSucceeded) {
     return <Loading />;
@@ -42,31 +40,34 @@ const Dashboard = () => {
     <DashboardLayout>
       <div className="mx-auto flex max-w-[1024px] flex-col   space-y-3">
         <h1 className="text-3xl font-medium">Upload images</h1>
-        {allUploadedImages.isSuccess &&
-        allUploadedImages.data?.uploadedImages ? (
-          <div className="flex flex-wrap items-center gap-[1px] ">
-            {allUploadedImages.data?.uploadedImages &&
-              allUploadedImages.data?.uploadedImages.map((image, i) => {
-                console.log(image);
-                if (image?.url)
-                  return (
-                    <Thumbnail
-                      key={i}
-                      id={i.toString()}
-                      src={image.url}
-                      onClick={() => {
-                        console.log(image);
-                        deleteImage.mutate({
-                          key: image.key,
-                        });
-                        router.push("/dashboard");
-                      }}
-                    />
-                  );
-              })}
+        {allUploadedImages.data?.uploadedImages && (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-[1px] ">
+              {allUploadedImages.data?.uploadedImages &&
+                allUploadedImages.data?.uploadedImages.map((image, i) => {
+                  if (image?.url)
+                    return (
+                      <Thumbnail key={i} s3Key={image.key} src={image.url} />
+                    );
+                })}
+            </div>
+            {!wantToUploadMore && (
+              <div className="flex justify-center">
+                <button
+                  className={`${CTAClassName}`}
+                  onClick={() => setWantToUploadMore(true)}
+                >
+                  Upload More
+                </button>
+              </div>
+            )}
           </div>
-        ) : (
-          <Dropzone />
+        )}
+
+        {(!allUploadedImages.data?.uploadedImages ||
+          allUploadedImages.data?.uploadedImages.length == 0 ||
+          wantToUploadMore) && (
+          <Dropzone setWantToUploadMore={setWantToUploadMore} />
         )}
       </div>
     </DashboardLayout>

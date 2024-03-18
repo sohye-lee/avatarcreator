@@ -9,12 +9,6 @@ import { api } from "@/utils/api";
 import "@/styles/globals.css";
 import Header from "@/components/header";
 
-// const inter = Gayathri({
-//   subsets: ["latin"],
-//   variable: "--font-sans",
-//   weight: ['100,']
-// });
-
 const inter = Inter({
   subsets: ["latin"],
   // variable: "--font-sans",

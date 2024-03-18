@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { nanoid } from "nanoid";
@@ -10,10 +11,16 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSmall from "../loadingSmall";
 import Thumbnail from "./thumbnail";
+import { useRouter } from "next/navigation";
 
 type FileWithPreview = File & { preview: string; id: string };
 
-export default function Dropzone() {
+interface DropzoneProps {
+  setWantToUploadMore: (value: boolean) => void;
+}
+
+export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
+  const router = useRouter();
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
   const [uploading, setUploading] = useState(false);
@@ -64,8 +71,10 @@ export default function Dropzone() {
 
   useEffect(() => {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    getUploadUrls.isSuccess && router.refresh();
+
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, [files]);
+  }, [files, deleteImage, router, setWantToUploadMore]);
 
   return (
     <section className="flex h-full w-full flex-col space-y-4">
@@ -94,13 +103,15 @@ export default function Dropzone() {
       {files && files.length > 0 && (
         <div className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-center bg-[rgba(0,0,0,.1)] py-5">
           <button
-            className={`${CTAClassName}  `}
+            className={`${CTAClassName}`}
             disabled={uploading}
-            onClick={() =>
+            onClick={() => {
               getUploadUrls.mutate({
                 images: files.map((file) => ({ imageId: file.id })),
-              })
-            }
+              });
+              setWantToUploadMore(false);
+              router.refresh();
+            }}
           >
             {uploading ? (
               <LoadingSmall />
@@ -112,7 +123,6 @@ export default function Dropzone() {
           </button>
         </div>
       )}
-      {/* <aside style={thumbsContainer}>{thumbs}</aside> */}
     </section>
   );
 }
