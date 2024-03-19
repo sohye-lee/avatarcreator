@@ -43,8 +43,8 @@ const Dashboard = () => {
         {allUploadedImages.data?.uploadedImages && (
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap items-center gap-[1px] ">
-              {allUploadedImages.data?.uploadedImages &&
-                allUploadedImages.data?.uploadedImages.map((image, i) => {
+              {allUploadedImages.data?.uploadedImages.length > 0 &&
+                allUploadedImages.data.uploadedImages.map((image, i) => {
                   if (image?.url)
                     return (
                       <Thumbnail key={i} s3Key={image.key} src={image.url} />

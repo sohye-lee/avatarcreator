@@ -42,13 +42,13 @@ const Thumbnail = ({ id, onClick, src, alt, s3Key }: ThumbnailProps) => {
           }}
         />
       </div>
-      <Image
+      <img
         src={src}
         alt={alt || "image"}
-        fill
-        className="h-auto w-auto object-cover"
-        sizes=" "
-        // className="h-auto min-h-full w-auto min-w-full object-fill"
+        // fill
+        // className="h-auto w-auto object-cover"
+        // sizes=" "
+        className="h-auto min-h-full w-auto min-w-full object-fill"
       />
     </div>
   );

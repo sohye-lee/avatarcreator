@@ -43,8 +43,6 @@ export const stripeRouter = createTRPCRouter({
 
   getPaymentStatus: protectedProcedure.query(
     async ({ ctx: { db, session } }) => {
-      console.log("session:", session);
-
       return await db.user.findFirst({
         where: {
           id: session.user.id,

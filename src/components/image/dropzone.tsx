@@ -2,16 +2,22 @@
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { nanoid } from "nanoid";
-import Image from "next/image";
-import { X } from "lucide-react";
 import { api } from "@/utils/api";
 import { CTAClassName } from "@/utils/constants";
-import { RiAiGenerate, RiRobot2Line, RiUploadCloud2Line } from "react-icons/ri";
+import { RiRobot2Line, RiUploadCloud2Line } from "react-icons/ri";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSmall from "../loadingSmall";
 import Thumbnail from "./thumbnail";
 import { useRouter } from "next/navigation";
+import ImageBlobReducer from "image-blob-reduce";
+// @ts-ignore
+import Pica from "pica";
+
+const pica = Pica({ features: ["js", "wasm", "cib"] });
+const ImageReducer = new ImageBlobReducer({
+  pica,
+});
 
 type FileWithPreview = File & { preview: string; id: string };
 
@@ -26,14 +32,30 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
 
   const allUploadedImages = api.storage.getUploadedImages.useQuery();
 
+  const startProcessingImages = api.images.startProcessingImages.useMutation();
+  const utils = api.useContext();
   const getUploadUrls = api.storage.getUploadUrls.useMutation({
     onSuccess: async (data) => {
       try {
         setUploading(true);
+        const resizedImages: Blob[] = [];
+        for (const photo of files) {
+          const resizedBlob = await ImageReducer.toBlob(
+            new Blob([photo], {
+              type: "image/jpeg",
+            }),
+            {
+              max: 1000,
+            },
+          );
+          resizedImages.push(resizedBlob);
+        }
         const uploadPromises = data.map((uploadUrl, i) => {
-          return axios.put(uploadUrl, files[i]);
+          return axios.put(uploadUrl, resizedImages[i]);
         });
         await Promise.all(uploadPromises);
+        utils.storage.getUploadedImages.invalidate();
+        startProcessingImages.mutate();
       } catch (error) {
         toast.error("Couldn't upload images.");
         console.log(error);
@@ -43,6 +65,7 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
     },
     onError: (err) => {
       console.log(err.message);
+      toast.error(err.message);
     },
   });
 
@@ -54,18 +77,18 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
     },
     onDrop: (acceptedFiles) => {
       const allSelectedFiles = [
+        ...files,
         ...acceptedFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
             id: nanoid(),
           }),
         ),
-        ...files,
       ];
 
-      const allowedImageCt =
-        10 - (allUploadedImages.data?.uploadedImages.length ?? 0);
-      allSelectedFiles.splice(10);
+      // const allowedImageCt =
+      //   10 - (allUploadedImages.data?.uploadedImages.length ?? 0);
+      // allSelectedFiles.splice(allowedImageCt);
       setFiles(allSelectedFiles);
     },
     maxFiles: 10,
@@ -73,7 +96,6 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
 
   const deleteImage = (id: string) => {
     const deletedFiles = files.filter((file) => file.id != id);
-    console.log("after deleted", deletedFiles);
     setFiles(deletedFiles);
   };
 
@@ -83,7 +105,7 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
     getUploadUrls.isSuccess && setWantToUploadMore(false);
 
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, [files, deleteImage, router, setWantToUploadMore, setFiles]);
+  }, [files, router, setWantToUploadMore, setFiles]);
 
   return (
     <section className="flex h-full w-full flex-col space-y-4">
@@ -99,37 +121,15 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
       </div>
       <div className="flex flex-wrap items-center gap-[1px] ">
         {files &&
-          // files.length > 0 &&
+          files.length > 0 &&
           files.map((file) => {
             return (
-              // <img className="w-32" alt={file.name} src={file.preview} />
-              // <Thumbnail
-              //   id={file.id}
-              //   src={file.preview}
-              //   alt={file.name}
-              //   onClick={deleteImage}
-              // />
-
-              <div className="fill group relative aspect-square w-[calc(50%-1px)] overflow-hidden md:w-[calc(33.3%-1px)] lg:w-[calc(20%-1px)]">
-                <div className="absolute right-0 top-0 z-10 flex h-8 w-8 items-center justify-center bg-[rgba(0,0,0,.5)] ">
-                  <X
-                    className="h-4 w-4 text-white"
-                    onClick={() => {
-                      console.log("deleting:", file.id);
-                      deleteImage(file.id);
-                      console.log("new array:", files);
-                    }}
-                  />
-                </div>
-                <Image
-                  src={file.preview.toString()}
-                  alt={file.name || "image"}
-                  fill
-                  // className="h-auto w-auto object-cover"
-                  sizes=" "
-                  className="h-auto min-h-full w-auto min-w-full object-fill"
-                />
-              </div>
+              <Thumbnail
+                id={file.id}
+                src={file.preview}
+                alt={file.name}
+                onClick={deleteImage}
+              />
             );
           })}
       </div>
