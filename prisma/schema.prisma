@@ -57,10 +57,12 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    uniqueKeyword String?
+    modelTrainingLimit Int @default(0)
+    isPaymentSucceeded Boolean @default(false)
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
-    isPaymentSucceeded Boolean @default(false)
 }
 
 model VerificationToken {

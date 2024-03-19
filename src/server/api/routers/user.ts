@@ -16,6 +16,7 @@ export const userRouter = createTRPCRouter({
       },
       data: {
         isPaymentSucceeded: true,
+        modelTrainingLimit: 1,
       },
     });
   }),

@@ -31,8 +31,8 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
   const [uploading, setUploading] = useState(false);
 
   const allUploadedImages = api.storage.getUploadedImages.useQuery();
-
   const startProcessingImages = api.images.startProcessingImages.useMutation();
+
   const utils = api.useContext();
   const getUploadUrls = api.storage.getUploadUrls.useMutation({
     onSuccess: async (data) => {
@@ -53,8 +53,10 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
         const uploadPromises = data.map((uploadUrl, i) => {
           return axios.put(uploadUrl, resizedImages[i]);
         });
+
         await Promise.all(uploadPromises);
         utils.storage.getUploadedImages.invalidate();
+
         startProcessingImages.mutate();
       } catch (error) {
         toast.error("Couldn't upload images.");
@@ -86,9 +88,9 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
         ),
       ];
 
-      // const allowedImageCt =
-      //   10 - (allUploadedImages.data?.uploadedImages.length ?? 0);
-      // allSelectedFiles.splice(allowedImageCt);
+      const allowedImageCt =
+        10 - (allUploadedImages.data?.uploadedImages.length ?? 0);
+      allSelectedFiles.splice(allowedImageCt);
       setFiles(allSelectedFiles);
     },
     maxFiles: 10,
@@ -142,7 +144,8 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
               getUploadUrls.mutate({
                 images: files.map((file) => ({ imageId: file.id })),
               });
-              // setWantToUploadMore(false);
+              setWantToUploadMore(false);
+              setFiles([]);
               // router.refresh();
             }}
           >
@@ -154,7 +157,7 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
               </>
             )}
           </button>
-          <button
+          {/* <button
             className={`${CTAClassName}`}
             // disabled={uploading}
             // onClick={() => {
@@ -166,7 +169,7 @@ export default function Dropzone({ setWantToUploadMore }: DropzoneProps) {
             // }}
           >
             <RiRobot2Line /> Start Training Model
-          </button>
+          </button> */}
         </div>
       )}
     </section>

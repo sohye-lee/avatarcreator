@@ -95,12 +95,54 @@ export const storageRouter = createTRPCRouter({
       return getSignedUrls;
     }),
 
-  getUploadedImages: protectedProcedure.query(async ({ ctx: { session } }) => {
-    const uploadedImages = await getAllSignedImagesOFUser(session.user?.id);
-    if (!uploadedImages) return { uploadedImages: [] };
+  // getUploadedImages: protectedProcedure.query(async ({ ctx: { session } }) => {
+  //   const uploadedImages = await getAllSignedImagesOFUser(session.user?.id);
+  //   if (!uploadedImages) return { uploadedImages: [] };
 
+  //   return {
+  //     uploadedImages,
+  //   };
+  // }),
+
+  getUploadedImages: protectedProcedure.query(async ({ ctx: { session } }) => {
+    const pathToImages = `images/${session.user.id}`;
+    const data = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: env.AWS_BUCKET_NAME,
+        Prefix: pathToImages,
+      }),
+    );
+
+    if (!data || !data.Contents) {
+      return undefined;
+    }
+    const allImages = await Promise.all(
+      data.Contents?.map((image) => image.Key).map((Key) =>
+        getSignedUrl(
+          s3,
+          new GetObjectCommand({
+            Bucket: env.AWS_BUCKET_NAME,
+            Key,
+          }),
+          { expiresIn: 3000 },
+        ),
+      ),
+    );
+
+    const uploadImagesWithKeys = allImages.map((url, i) => {
+      if (data.Contents && data.Contents[i] && data.Contents[i]?.Key) {
+        const key = data.Contents[i]?.Key;
+
+        if (key) {
+          return {
+            url,
+            key,
+          };
+        }
+      }
+    });
     return {
-      uploadedImages,
+      uploadedImages: uploadImagesWithKeys,
     };
   }),
 

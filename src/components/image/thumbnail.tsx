@@ -24,7 +24,7 @@ const Thumbnail = ({ id, onClick, src, alt, s3Key }: ThumbnailProps) => {
     },
   });
   return (
-    <div className="fill group relative aspect-square w-[calc(50%-1px)] overflow-hidden md:w-[calc(33.3%-1px)] lg:w-[calc(20%-1px)]">
+    <div className="fill group relative flex aspect-square w-[calc(50%-1px)] items-center justify-center overflow-hidden md:w-[calc(33.3%-1px)] lg:w-[calc(20%-1px)]">
       {deleteImage.isLoading && (
         <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center justify-center bg-[rgba(0,0,0,.1)] ">
           <RiLoader2Line className="h-5 w-5 animate-spin text-white" />

@@ -47,7 +47,7 @@ const HomePage = () => {
         "Payment succeeded! You will receive an email confirmation.",
       );
       updateUser;
-      // router.push("/dashboard");
+      router.push("/dashboard");
     }
 
     if (query.get("canceled")) {
