@@ -39,8 +39,18 @@ const Dashboard = () => {
     },
     onSuccess: (data) => {
       toast.success("Model training started...");
+      router.push("/generate-avatars");
     },
   });
+  const checkModelTrainingStatus =
+    api.replicate.checkModelTrainingStatus.useQuery(undefined, {
+      onSuccess: (data) => {
+        toast.success(
+          "Model traing has already started. We are redirecting you to the next page. ",
+        );
+        router.push("/generate-avatars");
+      },
+    });
 
   useEffect(() => {
     if (!session?.user) {

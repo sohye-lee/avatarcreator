@@ -24,6 +24,13 @@ export const replicateRouter = createTRPCRouter({
         });
       }
 
+      if (user?.modelTrainingLimit == 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not authorized to access to this service.",
+        });
+      }
+
       // check if the zip file exists - Get signed url from s3
       let zipFileSignedUrl;
       try {
@@ -37,7 +44,6 @@ export const replicateRouter = createTRPCRouter({
             expiresIn: 60 * 12,
           },
         );
-
         zipFileSignedUrl = zipFileUrl;
       } catch (error) {
         throw new TRPCError({
@@ -48,8 +54,7 @@ export const replicateRouter = createTRPCRouter({
       }
 
       // Create unique keyword and update user with this keyword
-      const userUniqueKeyword = nanoid(4);
-
+      const userUniqueKeyword = nanoid(7);
       await db.user.update({
         where: {
           id: session.user.id,
@@ -63,20 +68,76 @@ export const replicateRouter = createTRPCRouter({
       try {
         const url =
           "https://dreambooth-api-experimental.replicate.com/v1/trainings";
-        axios.post(url, {
-          input: {
-            instance_prompt: `an avatar image of a ${userUniqueKeyword} person`,
-            class_prompt: "a photo of a person",
-            instance_data: zipFileSignedUrl,
-            max_train_steps: 2000,
+        const { data } = await axios.post(
+          url,
+          {
+            input: {
+              instance_prompt: `an illustrated avatar image of a ${userUniqueKeyword} person`,
+              class_prompt: "a photo of a person",
+              instance_data: zipFileSignedUrl,
+              max_train_steps: 500,
+            },
+            model: `sohye-lee/${session.user?.id}`,
+            trainer_version:
+              "cd3f925f7ab21afaef7d45224790eedbb837eeac40d22e8fefe015489ab644aa",
+            webhook_completed: `${env.REPLICATE_TRAINING_FINISHED_WEBHOOK}?userId=${session.user.id}`,
           },
-          model: `sohye-lee/${session.user?.id}`,
-          trainer_version:
-            "cd3f925f7ab21afaef7d45224790eedbb837eeac40d22e8fefe015489ab644aa",
-          webhook_completed: "https://example.com/dreambooth-webhook",
+          {
+            headers: {
+              Authorization: `Token ${env.REPLICATE_API_TOKEN}`,
+            },
+          },
+        );
+
+        const updatedUser = await db.user.update({
+          where: {
+            id: session.user.id,
+          },
+          data: {
+            modelTrainingLimit: {
+              decrement: 1,
+            },
+            trainingModelId: data.id,
+          },
         });
       } catch (error) {
-        console.log(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Training failed.",
+        });
+      }
+    },
+  ),
+
+  checkModelTrainingStatus: protectedProcedure.query(
+    async ({ ctx: { db, session } }) => {
+      const user = await db.user.findUnique({
+        where: {
+          id: session.user.id,
+        },
+      });
+
+      if (!user?.trainingModelId)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Training Model Id missing.",
+        });
+      try {
+        const { data } = await axios.get(
+          `https://dreambooth-api-experimental.replicate.com/v1/trainings/${user?.trainingModelId}`,
+          {
+            headers: {
+              Authorization: env.REPLICATE_API_TOKEN,
+            },
+          },
+        );
+
+        return data.status;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong while processing. Please retry.",
+        });
       }
     },
   ),
