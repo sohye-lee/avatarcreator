@@ -26,14 +26,13 @@ export function Nav() {
         <MenubarContent className="r-3 -translate-x-4 py-4">
           {status == "authenticated" ? (
             <>
-              <MenubarItem>
+              <MenubarItem disabled>
                 <p className="text-purple-500">Hi, {session?.user?.name}</p>
               </MenubarItem>
 
               <MenubarItem>
                 <p>Manage Profile</p>
               </MenubarItem>
-              <MenubarSeparator />
               <MenubarItem onClick={() => signOut()}>
                 <p>Logout</p>
               </MenubarItem>

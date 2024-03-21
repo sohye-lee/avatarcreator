@@ -27,8 +27,7 @@ const replicateWebhook = async (req: NextApiRequest, res: NextApiResponse) => {
         trainingVersion: req.body.version,
       },
     });
-
-    console.log("REQ BODY:", req.body);
+    console.log("TRAINING MODEL V.:", req.body.version);
 
     // send user an email with result
     const transporter = nodemailer.createTransport({
@@ -41,11 +40,10 @@ const replicateWebhook = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    // async..await is not allowed in global scope, must use a wrapper
     if (updatedUser.email) {
       await transporter.sendMail({
         from: env.EMAIL_FROM, // sender address
-        to: updatedUser.email!, // list of receivers
+        to: updatedUser.email, // list of receivers
         subject:
           "BlinkAvatar: Your Personal Avatar Creation Journey Begins Now!", // Subject line
         html: `<p>Congratulations and welcome to the next phase of your avatar creation journey! We're excited to inform you that your personal model, trained with the photos you've uploaded, is now ready to bring your unique avatars to life.</p>

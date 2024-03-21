@@ -6,6 +6,7 @@ import { env } from "@/env";
 import axios from "axios";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { nanoid } from "nanoid";
+import { z } from "zod";
 
 export const replicateRouter = createTRPCRouter({
   startTrainingModel: protectedProcedure.mutation(
@@ -122,18 +123,20 @@ export const replicateRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "Training Model Id missing.",
         });
+
       try {
         const { data } = await axios.get(
           `https://dreambooth-api-experimental.replicate.com/v1/trainings/${user?.trainingModelId}`,
           {
             headers: {
-              Authorization: env.REPLICATE_API_TOKEN,
+              Authorization: `Token ${env.REPLICATE_API_TOKEN}`,
             },
           },
         );
 
         return data.status;
       } catch (error) {
+        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong while processing. Please retry.",
@@ -141,4 +144,57 @@ export const replicateRouter = createTRPCRouter({
       }
     },
   ),
+
+  generateAvatars: protectedProcedure
+    .input(
+      z.object({
+        prompt: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx: { db, session }, input: { prompt } }) => {
+      const user = await db.user.findUnique({
+        where: {
+          id: session.user.id,
+        },
+      });
+
+      if (!user?.credits || (user?.credits && user?.credits < 1)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have enough credits.",
+        });
+      }
+
+      if (!user?.trainingVersion) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Training model version is missing.",
+        });
+      }
+
+      try {
+        const { data } = await axios.post(
+          "https://api.replicate.com/v1/predictions",
+          {
+            input: {
+              prompt,
+            },
+            version: user?.trainingVersion,
+          },
+          {
+            headers: {
+              Authorization: `Token ${env.REPLICATE_API_TOKEN}`,
+            },
+          },
+        );
+
+        console.log("RESULTS:", data);
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong...",
+        });
+      }
+    }),
 });

@@ -19,7 +19,7 @@ const Dashboard = () => {
   const paymentStatus = api.stripe.getPaymentStatus.useQuery(undefined, {
     onError: (err) => {
       if (err.data?.httpStatus == 401) {
-        router.push("/");
+        // router.push("/");
         toast.error("Please login first.");
       }
     },
@@ -64,7 +64,7 @@ const Dashboard = () => {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout sectionTitle="Upload Your Selfies">
       <div className="mx-auto flex max-w-[1024px] flex-col   space-y-3">
         <h1 className="text-3xl font-medium">Upload images</h1>
         {allUploadedImages.data?.uploadedImages && (
@@ -89,6 +89,7 @@ const Dashboard = () => {
                     Upload More
                   </button>
                 </div>
+
                 <button
                   className={`${CTAClassName} disabled:bg-slate-500`}
                   onClick={() => {
