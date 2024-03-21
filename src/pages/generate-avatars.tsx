@@ -4,18 +4,11 @@ import Loading from "@/components/loading";
 import LoadingSmall from "@/components/loadingSmall";
 import { Button } from "@/components/ui/button";
 import { api } from "@/utils/api";
-import { AvatarSamples, avatarSamples } from "@/utils/constants";
-import { apiBaseUrl } from "next-auth/client/_utils";
+import { avatarSamples } from "@/utils/constants";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
-import {
-  RiAiGenerate,
-  RiCopyleftLine,
-  RiCopyrightLine,
-  RiFileCopyLine,
-  RiRobotLine,
-} from "react-icons/ri";
+import { RiAiGenerate, RiFileCopyLine } from "react-icons/ri";
 
 export default function GenerateAvatars() {
   const { data: session } = useSession();
@@ -74,6 +67,9 @@ export default function GenerateAvatars() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   console.log(prompt);
+                  generateAvatars.mutate({
+                    prompt: prompt || "an illustrated avatar",
+                  });
                 }}
                 className="pb-16"
               >
