@@ -1,13 +1,17 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import smartcrop from "smartcrop-sharp";
 import { s3 } from "@/utils/s3";
 import { env } from "@/env";
-import { getAllSignedImagesOFUser } from "./storage";
 import { TRPCError } from "@trpc/server";
 import axios from "axios";
 import sharp from "sharp";
 import JSZip from "jszip";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const WIDTH = 512;
 const HEIGHT = 512;
@@ -18,8 +22,45 @@ export const imagesRouter = createTRPCRouter({
     async ({ ctx: { session } }) => {
       //get all images
       try {
-        const images = await getAllSignedImagesOFUser(session.user?.id);
-        if (!images || !images.uploadedImages)
+        const pathToImages = `images/${session.user.id}`;
+        const data = await s3.send(
+          new ListObjectsV2Command({
+            Bucket: env.AWS_BUCKET_NAME,
+            Prefix: pathToImages,
+          }),
+        );
+
+        if (!data || !data.Contents) {
+          return undefined;
+        }
+        const allImages = await Promise.all(
+          data.Contents?.map((image) => image.Key).map((Key) =>
+            getSignedUrl(
+              s3,
+              new GetObjectCommand({
+                Bucket: env.AWS_BUCKET_NAME,
+                Key,
+              }),
+              { expiresIn: 3000 },
+            ),
+          ),
+        );
+
+        const images = allImages.map((url, i) => {
+          if (data.Contents && data.Contents[i] && data.Contents[i]?.Key) {
+            const key = data.Contents[i]?.Key;
+
+            if (key) {
+              return {
+                url,
+                key,
+              };
+            }
+          }
+        });
+
+        // const images = await getAllSignedImagesOFUser(session.user?.id);
+        if (!images)
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "Image processing failed.",
@@ -27,7 +68,7 @@ export const imagesRouter = createTRPCRouter({
 
         const folder = zip.folder("data");
 
-        for (const imageObj of images.uploadedImages) {
+        for (const imageObj of images) {
           if (imageObj?.url) {
             const response = await axios.get(imageObj?.url, {
               responseType: "arraybuffer",

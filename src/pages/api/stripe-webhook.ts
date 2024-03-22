@@ -1,5 +1,4 @@
 import { env } from "@/env";
-import { db } from "@/server/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Readable } from "stream";
 import Stripe from "stripe";
@@ -23,8 +22,6 @@ async function buffer(readable: Readable) {
 }
 
 const stripeWebhook = async (req: NextApiRequest, res: NextApiResponse) => {
-  // const session = await getServerSession(authOptions);
-  //   console.log("server session:", session);
   if (req.method === "POST") {
     let event;
     const buf = await buffer(req);

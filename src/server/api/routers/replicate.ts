@@ -158,7 +158,7 @@ export const replicateRouter = createTRPCRouter({
         },
       });
 
-      if (!user?.credits || (user?.credits && user?.credits < 1)) {
+      if (!user?.credits || user?.credits < 1) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You don't have enough credits.",

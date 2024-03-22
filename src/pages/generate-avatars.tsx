@@ -8,18 +8,26 @@ import { avatarSamples } from "@/utils/constants";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { RiAiGenerate, RiFileCopyLine } from "react-icons/ri";
 
 export default function GenerateAvatars() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [prompt, setPrompt] = useState<string>();
+  const [prompt, setPrompt] = useState("");
   const [selectedSample, setSelectedSample] = useState<number>();
 
   const checkModelTrainingStatus =
     api.replicate.checkModelTrainingStatus.useQuery();
   const getUser = api.user.getUser.useQuery();
-  const generateAvatars = api.replicate.generateAvatars.useMutation();
+  const generateAvatars = api.replicate.generateAvatars.useMutation({
+    onSuccess: () => {
+      toast.success("Please allow 3 to 5 minutes");
+    },
+    onError: (error) => {
+      toast.error(error.message.slice(0, 200));
+    },
+  });
 
   useEffect(() => {
     (!session || !session?.user) && router.push("/");
@@ -68,7 +76,7 @@ export default function GenerateAvatars() {
                   e.preventDefault();
                   console.log(prompt);
                   generateAvatars.mutate({
-                    prompt: prompt || "an illustrated avatar",
+                    prompt,
                   });
                 }}
                 className="pb-16"
@@ -102,7 +110,7 @@ export default function GenerateAvatars() {
                     <div
                       key={avatar.style}
                       onClick={() => {
-                        setPrompt(avatarSamples[i]?.prompt);
+                        setPrompt(avatarSamples[i]?.prompt ?? "");
                         setSelectedSample(i);
                       }}
                       className={`group relative aspect-square cursor-pointer overflow-hidden rounded border border-slate-300 ${selectedSample == i && "ring-2 ring-purple-600"}`}
