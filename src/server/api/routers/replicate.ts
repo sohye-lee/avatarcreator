@@ -80,7 +80,8 @@ export const replicateRouter = createTRPCRouter({
             },
             model: `sohye-lee/${session.user?.id}`,
             trainer_version:
-              "cd3f925f7ab21afaef7d45224790eedbb837eeac40d22e8fefe015489ab644aa",
+              "f0f8a1578f4e57da2090b1846a3c026bd75d38abd969e1d4788b07f203966294",
+            // "cd3f925f7ab21afaef7d45224790eedbb837eeac40d22e8fefe015489ab644aa",
             webhook_completed: `${env.REPLICATE_TRAINING_FINISHED_WEBHOOK}?userId=${session.user.id}`,
           },
           {
@@ -152,6 +153,7 @@ export const replicateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx: { db, session }, input: { prompt } }) => {
+      console.log("Backend Prompt:", prompt);
       const user = await db.user.findUnique({
         where: {
           id: session.user.id,
@@ -180,6 +182,7 @@ export const replicateRouter = createTRPCRouter({
               prompt,
             },
             version: user?.trainingVersion,
+            webhook_completed: `${env.REPLICATE_AVATAR_GENERATED_WEBHOOK}?userId=${session.user.id}`,
           },
           {
             headers: {

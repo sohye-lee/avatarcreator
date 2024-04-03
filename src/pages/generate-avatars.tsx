@@ -9,7 +9,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { RiAiGenerate, RiFileCopyLine } from "react-icons/ri";
+import {
+  RiAiGenerate,
+  RiFileCopyLine,
+  RiFileCopy2Line,
+  RiFilePaperLine,
+} from "react-icons/ri";
 
 export default function GenerateAvatars() {
   const { data: session } = useSession();
@@ -23,6 +28,7 @@ export default function GenerateAvatars() {
   const generateAvatars = api.replicate.generateAvatars.useMutation({
     onSuccess: () => {
       toast.success("Please allow 3 to 5 minutes");
+      setPrompt("");
     },
     onError: (error) => {
       toast.error(error.message.slice(0, 200));
@@ -31,7 +37,7 @@ export default function GenerateAvatars() {
 
   useEffect(() => {
     (!session || !session?.user) && router.push("/");
-    console.log(checkModelTrainingStatus);
+    console.log("getuser data:", getUser.data);
   }, [checkModelTrainingStatus.data]);
 
   return (
@@ -63,7 +69,13 @@ export default function GenerateAvatars() {
               <h3 className="text-center text-2xl font-semibold">
                 Give Us Your Avatar Style
               </h3>
-              <p className="text-md py-8">
+              <div className="text-md p font-inter my-8 flex items-center justify-center gap-3 text-blue-700">
+                <p>Your Remaining Credits</p>
+                <p className="flex items-center gap-2 rounded border border-blue-300 bg-blue-100 px-4 py-1 text-sm">
+                  {getUser?.data?.credits}
+                </p>
+              </div>
+              <p className="text-md pb-8">
                 <strong>Pick your favorite or create your own!</strong> Explore
                 these unique avatars, each in a distinct style, from classic
                 cartoons to sleek minimalism. Find the one that speaks to you
@@ -74,9 +86,10 @@ export default function GenerateAvatars() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  console.log(prompt);
+                  console.log("Client Prompt:", prompt);
                   generateAvatars.mutate({
                     prompt,
+                    // keyword: U,
                   });
                 }}
                 className="pb-16"
@@ -110,7 +123,10 @@ export default function GenerateAvatars() {
                     <div
                       key={avatar.style}
                       onClick={() => {
-                        setPrompt(avatarSamples[i]?.prompt ?? "");
+                        setPrompt(
+                          `For the user ${getUser?.data?.uniqueKeyword ?? ""}, ` +
+                            (avatarSamples[i]?.prompt ?? ""),
+                        );
                         setSelectedSample(i);
                       }}
                       className={`group relative aspect-square cursor-pointer overflow-hidden rounded border border-slate-300 ${selectedSample == i && "ring-2 ring-purple-600"}`}

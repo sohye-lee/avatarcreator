@@ -47,6 +47,7 @@ export const env = createEnv({
     AWS_BUCKET_NAME: z.string(),
     REPLICATE_API_TOKEN: z.string(),
     REPLICATE_TRAINING_FINISHED_WEBHOOK: z.string(),
+    REPLICATE_AVATAR_GENERATED_WEBHOOK: z.string(),
   },
 
   /**
@@ -87,6 +88,8 @@ export const env = createEnv({
     REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
     REPLICATE_TRAINING_FINISHED_WEBHOOK:
       process.env.REPLICATE_TRAINING_FINISHED_WEBHOOK,
+    REPLICATE_AVATAR_GENERATED_WEBHOOK:
+      process.env.REPLICATE_AVATAR_GENERATED_WEBHOOK,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

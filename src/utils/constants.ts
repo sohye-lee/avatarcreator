@@ -10,73 +10,73 @@ export const avatarSamples: AvatarSamples[] = [
   {
     style: "Disney Style",
     prompt:
-      "Create an avatar in the Disney style, based on the trained model. The avatar should capture the essence of Disney's animation with expressive eyes, exaggerated facial expressions, and fluid animation. The character should have a joyful and whimsical appearance, embodying the magic and charm of classic Disney characters.",
+      "Imagine creating an avatar imbued with the enchantment and timeless charm of classic Disney animation. This avatar should be brought to life in a manner that feels like it's stepped out from one of Disney's iconic films. Picture a character with eyes sparkling with wonder, a smile brimming with joy, and a pose that suggests they're ready to burst into song. Their attire should be as magical as their personality, with flowing lines and a palette that's both vibrant and whimsical. The background might hint at a fairytale setting, inviting the viewer into a world where dreams come true.",
     filename: "avatar1.jpg",
   },
   {
     style: "Pixar Style",
     prompt:
-      "Create an avatar in the Pixar style, based on the trained model. The avatar should feature realistic textures, detailed facial expressions, and appealing character designs that are hallmark to Pixar's animation. The character should convey a sense of depth and personality, embodying the lifelike, yet stylized appearance of Pixar characters.",
+      "Envision an avatar that encapsulates the heartwarming, three-dimensional depth of Pixar's beloved characters. This avatar should stand as if ready to embark on an adventurous journey, with textures so realistic you could reach out and touch them. Their eyes should reflect complex emotions, a testament to Pixar's ability to tell profound stories through animation. The character's design should balance between stylized and lifelike, making them relatable yet unmistakably unique. Their environment should be rendered with the same attention to detail, suggesting a story waiting to unfold.",
     filename: "avatar2.jpg",
   },
   {
     style: "Anime/Manga Style",
     prompt:
-      "Create an avatar in the Anime/Manga style, based on the trained model. The avatar should feature large, expressive eyes, detailed hair, and embody the distinctive aesthetic of Japanese anime and manga. The character should look engaging, with a dynamic expression that captures the essence of anime's visual storytelling.",
+      "Craft an avatar that channels the intense emotion and dramatic flair of anime and manga. This character should have large, expressive eyes that seem to convey their thoughts and feelings without words, and their hair should be styled in a way that defies gravity, adding to their dynamic presence. The pose and expression should capture a moment of tension or emotion, drawing the viewer into the anime's narrative world. The design should emphasize clean lines and detailed shading, characteristic of the anime and manga style.",
     filename: "avatar3.jpg",
   },
   {
     style: "Chibi Style",
     prompt:
-      "Create an avatar in the Chibi style, based on the trained model. The avatar should feature characters with oversized heads, large eyes, and small bodies, emphasizing cuteness and simplicity. This style is a subset of anime/manga, known for its adorable and exaggerated features that capture the essence of Chibi's unique charm.",
+      "Design a Chibi-style avatar that exudes cuteness and simplicity, with an oversized head, sparkling large eyes, and a tiny body. The character should embody an exaggerated adorableness, with expressions and gestures that amplify their endearing qualities. The styling should lean towards vibrant colors and simplified forms, making the avatar instantly lovable and engaging. This avatar should look like it could be a mascot of joy, ready to spread happiness.",
     filename: "avatar4.jpg",
   },
   {
     style: "Pop Art Style",
     prompt:
-      "Create an avatar in a general Pop Art style, based on the trained model. The avatar should feature vibrant colors, bold outlines, and a standout aesthetic that is characteristic of the Pop Art movement. This style should make the character eye-catching and iconic, embodying the fun and energetic essence of Pop Art.",
+      "Create an avatar that pops with the vibrant, eye-catching essence of Pop Art. Imagine bold, bright colors and thick outlines that make the character leap off the canvas. The avatar should have a stylized appearance, with exaggerated features or expressions that capture the viewer's attention instantly. This style should evoke the feeling of classic pop art pieces, blending art with popular culture in a way that's both nostalgic and fresh.",
     filename: "avatar5.jpg",
   },
   {
     style: "Impressionist Style",
     prompt:
-      "Create a headshot avatar in a general Impressionist style, inspired by the techniques used by artists like Van Gogh, based on the trained model. The avatar should feature vibrant colors, visible brushstrokes, and an emphasis on light, typical of Impressionist art. This style should convey the emotional impact and sense of movement characteristic of Impressionism, focusing on capturing the essence and mood of the subject in the headshot.",
+      "Conceive an avatar that seems to dance with the brushstrokes and color splashes of Impressionism. Inspired by masters like Van Gogh, the avatar should be a blend of vibrant colors and visible brushwork that captures the essence of the subject more than their precise details. Light and shadow should play across the features in a way that suggests movement and emotion, inviting the viewer to feel the mood rather than just see a portrait.",
     filename: "avatar6.jpg",
   },
   {
     style: "Retro 8-Bit/16-Bit Style",
     prompt:
-      "Create a headshot avatar in a Retro 8-Bit/16-Bit style. The avatar should capture the essence of vintage video games with its pixelated graphics, reminiscent of early gaming consoles. This style should feature a simple color palette, blocky graphics, and a charming nostalgia factor. The focus is on creating a character that would look at home in an arcade game from the 1980s or early 1990s, showcasing the iconic pixel art style.",
+      "Imagine an avatar designed in the nostalgic 8-bit or 16-bit style of vintage video games. This character should embrace the simplicity and charm of pixel art, with a limited color palette and blocky graphics that evoke the early days of gaming. The design should be straightforward yet iconic, capable of conveying personality and identity within the constraints of retro game aesthetics.",
     filename: "avatar7.jpg",
   },
   {
     style: "South Park Style",
     prompt:
-      "Create a headshot avatar in the South Park style. The avatar should mimic the simple, geometric character designs and satirical approach typical of the South Park animation. Focus on capturing the essence of the show's characters, with their distinctive shapes, minimalistic facial features, and iconic clothing styles, if applicable. The goal is to create a character that could seamlessly fit into the South Park universe, embodying the humor and unique aesthetic of the series.",
+      "Design an avatar that would fit seamlessly into the satirical world of South Park. The character should adopt the show's simplistic, geometric design philosophy, with minimalistic features that still convey a distinct personality. The style should mirror the show's blend of humor and critique, enabling the character to look as though they could walk onto the screen and join in the irreverent adventures of South Park.",
     filename: "avatar8.jpg",
   },
   {
     style: "Graffiti Style",
     prompt:
-      "Create a headshot avatar in a Graffiti style, specifically focusing on the appearance as if it were spray-painted directly onto a wall, without any pencils or brushes visible. The avatar should look like genuine street art, featuring bold lines, vibrant colors, and the distinctive, expressive flair of graffiti. This design should emphasize the urban and rebellious spirit of graffiti, looking as though it has been artfully created with spray cans on an urban landscape, capturing the dynamic and expressive nature of this art form.",
+      "Envision an avatar that embodies the raw, vibrant energy of street art. This character should appear as though spray-painted onto an urban wall, with bold lines and bright, contrasting colors that capture the spirit of graffiti. The design should convey a sense of rebellion and freedom, reflecting the unique, expressive flair of street art culture.",
     filename: "avatar9.jpg",
   },
   {
     style: "Minimalist Style",
     prompt:
-      "Create a woman's headshot avatar in a Minimalist style. The avatar should emphasize femininity and simplicity, using basic shapes and a limited color palette to convey the subject's essence. This style should focus on clean lines and geometric forms to capture the character's likeness in a straightforward and elegant manner, embodying the sleek, modern aesthetic of Minimalism. The design should present a character that is both stylish and easily recognizable, highlighting minimalistic beauty.",
+      "Create a minimalist headshot avatar of this user, focusing on conveying femininity and character through simple, geometric shapes and a restrained color palette. This avatar should strip away complexity, highlighting essential features with clean lines and forms. The design should embody elegance and modernity, capturing the subject's essence in a way that feels both timeless and contemporary.",
     filename: "avatar10.jpg",
   },
   {
     style: "Cartoon Style",
     prompt:
-      "Create a headshot avatar in a Cartoon style, focusing on a bright and expressive character that embodies the essence of classic cartoon animation. The avatar should feature exaggerated facial expressions, vibrant colors, and a playful, dynamic pose that captures the whimsical nature of cartoons. Emphasize bold outlines and a lively expression, making the character appear as if it could jump right off the screen. The goal is to create an avatar that is instantly recognizable and brings a sense of joy and nostalgia, reminiscent of Saturday morning cartoons.",
+      "Craft an avatar bursting with the joy and exaggerated expressiveness of classic cartoons. This character should be vibrant and colorful, with bold outlines and a dynamic pose that suggests motion and emotion. The facial expression should be lively and engaging, inviting the viewer into a world of whimsy and fun. The design should recall the golden age of animation, evoking nostalgia and a sense of endless possibility.",
     filename: "avatar11.jpg",
   },
   {
     style: "3D Game Style",
     prompt:
-      "Create a headshot avatar in a style reminiscent of Roblox or Minecraft characters, focusing on a block-like, pixelated design. The avatar should showcase the distinctive cubic and geometric shapes characteristic of these games, with clear, blocky features and a simple color scheme that emphasizes the pixel art and construction game aesthetic. This style should capture the playful and creative spirit of building games, presenting a character that looks like it could exist within a virtual world built from blocks. The design should convey a sense of fun and imagination, appealing to fans of these popular gaming platforms.",
+      "Imagine an avatar in the cubic, pixelated world of games like Roblox or Minecraft. This character should embody the playful creativity of block-building games, with clear, geometric shapes and a simple yet expressive color scheme. The design should make the avatar look as if it could be a character in a 3D virtual world, ready to explore, build, and create with the imagination of a Minecraft or Roblox gamer.",
     filename: "avatar12.jpg",
   },
 ];
