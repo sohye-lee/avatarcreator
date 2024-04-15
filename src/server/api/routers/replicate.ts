@@ -7,6 +7,10 @@ import axios from "axios";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { nanoid } from "nanoid";
 import { z } from "zod";
+import Replicate from "replicate";
+const replicate = new Replicate({
+  auth: env.REPLICATE_API_TOKEN,
+});
 
 export const replicateRouter = createTRPCRouter({
   startTrainingModel: protectedProcedure.mutation(
@@ -175,23 +179,54 @@ export const replicateRouter = createTRPCRouter({
       }
 
       try {
-        const { data } = await axios.post(
-          "https://api.replicate.com/v1/predictions",
+        // ORIGINAL
+        // const { data } = await axios.post(
+        //   "https://api.replicate.com/v1/predictions",
+        //   {
+        //     input: {
+        //       prompt,
+        //     },
+        //     version: user?.trainingVersion,
+        //     webhook_completed: `${env.REPLICATE_AVATAR_GENERATED_WEBHOOK}?userId=${session.user.id}`,
+        //   },
+        //   {
+        //     headers: {
+        //       Authorization: `Token ${env.REPLICATE_API_TOKEN}`,
+        //     },
+        //   },
+        // );
+
+        // SECOND: BECOME_IMAGE
+        // const input = {
+        //   image: `${env.NGROK_HOST}/images/samples/selfie.jpg`,
+        //   image_to_become: `${env.NGROK_HOST}/images/samples/vermeer.jpg`,
+        // };
+        // const output = await replicate.run(
+        //   "fofr/become-image:8d0b076a2aff3904dfcec3253c778e0310a68f78483c4699c7fd800f3051d2b3",
+        //   { input },
+        // );
+        const output = await replicate.run(
+          "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
           {
             input: {
-              prompt,
-            },
-            version: user?.trainingVersion,
-            webhook_completed: `${env.REPLICATE_AVATAR_GENERATED_WEBHOOK}?userId=${session.user.id}`,
-          },
-          {
-            headers: {
-              Authorization: `Token ${env.REPLICATE_API_TOKEN}`,
+              image: `${env.NGROK_HOST}/images/samples/selfie.jpg`,
+              steps: 20,
+              width: 512,
+              height: 512,
+              prompt: "a person",
+              upscale: false,
+              upscale_steps: 10,
+              negative_prompt: "",
+              prompt_strength: 4.5,
+              ip_adapter_noise: 0.5,
+              ip_adapter_weight: 0.2,
+              instant_id_strength: 0.7,
             },
           },
         );
 
-        console.log("RESULTS:", data);
+        console.log("RESULTS:", output);
+        console.log("FIRST RESULT:");
       } catch (error) {
         console.log(error);
         throw new TRPCError({

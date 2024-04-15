@@ -1,4 +1,5 @@
 "use client";
+import Thumbnail from "@/components/image/thumbnail";
 import DashboardLayout from "@/components/layout";
 import Loading from "@/components/loading";
 import LoadingSmall from "@/components/loadingSmall";
@@ -9,12 +10,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  RiAiGenerate,
-  RiFileCopyLine,
-  RiFileCopy2Line,
-  RiFilePaperLine,
-} from "react-icons/ri";
+import { RiAiGenerate, RiFileCopyLine } from "react-icons/ri";
 
 export default function GenerateAvatars() {
   const { data: session } = useSession();
@@ -24,7 +20,9 @@ export default function GenerateAvatars() {
 
   const checkModelTrainingStatus =
     api.replicate.checkModelTrainingStatus.useQuery();
-  const getUser = api.user.getUser.useQuery();
+  const userData = api.user.getUser.useQuery(undefined, {
+    refetchInterval: 15 * 1000,
+  });
   const generateAvatars = api.replicate.generateAvatars.useMutation({
     onSuccess: () => {
       toast.success("Please allow 3 to 5 minutes");
@@ -37,7 +35,7 @@ export default function GenerateAvatars() {
 
   useEffect(() => {
     (!session || !session?.user) && router.push("/");
-    console.log("getuser data:", getUser.data);
+    console.log("getuser data:", userData.data);
   }, [checkModelTrainingStatus.data]);
 
   return (
@@ -72,7 +70,7 @@ export default function GenerateAvatars() {
               <div className="text-md p font-inter my-8 flex items-center justify-center gap-3 text-blue-700">
                 <p>Your Remaining Credits</p>
                 <p className="flex items-center gap-2 rounded border border-blue-300 bg-blue-100 px-4 py-1 text-sm">
-                  {getUser?.data?.credits}
+                  {userData?.data?.credits}
                 </p>
               </div>
               <p className="text-md pb-8">
@@ -105,8 +103,8 @@ export default function GenerateAvatars() {
                 ></textarea>
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-blue-800">
-                    {getUser.isSuccess ? (
-                      `You have ${getUser.data?.credits || "0"} credits remaining.`
+                    {userData.isSuccess ? (
+                      `You have ${userData.data?.credits || "0"} credits remaining.`
                     ) : (
                       <LoadingSmall />
                     )}
@@ -124,7 +122,7 @@ export default function GenerateAvatars() {
                       key={avatar.style}
                       onClick={() => {
                         setPrompt(
-                          `For the user ${getUser?.data?.uniqueKeyword ?? ""}, ` +
+                          `For the user ${userData?.data?.uniqueKeyword ?? ""}, ` +
                             (avatarSamples[i]?.prompt ?? ""),
                         );
                         setSelectedSample(i);
@@ -150,6 +148,23 @@ export default function GenerateAvatars() {
               </div>
             </div>
           )}
+
+        <div className="flex flex-wrap">
+          {userData?.isSuccess &&
+            userData?.data?.images &&
+            // <div className="">
+            userData?.data?.images.map((image, i) => {
+              return (
+                <div className="fill group relative flex aspect-square w-[calc(50%-1px)]   items-center justify-center overflow-hidden md:w-[calc(33.3%-1px)] lg:w-[calc(20%-1px)]">
+                  <img
+                    src={image.imageUrl}
+                    alt={"image"}
+                    className="h-auto min-h-full w-auto min-w-full object-fill"
+                  />
+                </div>
+              );
+            })}
+        </div>
       </div>
     </DashboardLayout>
   );
